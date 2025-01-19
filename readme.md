@@ -1,3 +1,6 @@
+This is a fork of official Corne Keyboard Firmware repo.
+Here i track my keyboards layout and firmware customizations.
+
 # KBD firmware
 
 ## How to build
