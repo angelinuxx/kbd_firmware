@@ -64,7 +64,7 @@
             }
         },
         "transport": {
-            "protocol": "serial_usart",
+            "protocol": "serial",
             "sync": {
                 "matrix_state": true
             },
