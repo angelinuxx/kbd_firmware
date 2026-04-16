@@ -6,7 +6,8 @@
     "usb": {
         "vid": "0x4653",
         "pid": "0x0005",
-        "device_version": "1.0.0"
+        "device_version": "1.0.0",
+        "suspend_wakeup_delay": 200
     },
     "processor": "RP2040",
     "bootloader": "rp2040",
@@ -17,10 +18,10 @@
         "rgb_matrix": true,
         "mousekey": true
     },
-    "build": {
-        "lto": true
-    },
     "diode_direction": "COL2ROW",
+    "dynamic_keymap": {
+        "layer_count": 6
+    },
     "matrix_pins": {
         "direct":[
             ["GP24", "GP26", "GP28",  "GP4",  "GP5",   "GP7"],
@@ -38,6 +39,9 @@
         "bootmagic": {
             "matrix": [ 4, 0 ]
         },
+        "handedness": {
+            "pin": "GP21"
+        },
         "matrix_pins": {
             "right": {
                 "direct":[
@@ -47,6 +51,9 @@
                     ["GP22", "GP16", "GP17", "GP14", "GP13",  "GP12"]
                 ]
             }
+        },
+        "serial": {
+            "driver": "vendor"
         },
         "transport": {
             "sync": {
@@ -174,6 +181,7 @@
             "solid_splash": true,
             "solid_multisplash": true
         },
+        "sleep": true,
         "layout": [
             {"matrix": [0, 0], "x":   0, "y":  0, "flags": 4},
             {"matrix": [0, 1], "x":  10, "y":  0, "flags": 4},
