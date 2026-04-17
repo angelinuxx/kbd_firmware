@@ -61,6 +61,8 @@ vial-qmk-init:
 	rm -rf src/vial-kb/vial-qmk/keyboards/tmp/${KB}/keymaps
 	ln -s $(shell pwd)/keyboards/${KB}/vial-kb/vial-qmk/keymaps src/vial-kb/vial-qmk/keyboards/tmp/${KB}/keymaps
 	mkdir -p keyboards/${KB}/vial-kb/vial-qmk/.build
+	-cp $(CURDIR)/drivers/${KB}/vial-kb/vial-qmk/oled/oled_driver.c src/vial-kb/vial-qmk/keyboards/tmp/${KB}/
+	-cp $(CURDIR)/keyboards/${KB}/qmk/qmk_firmware/crkbd.c src/vial-kb/vial-qmk/keyboards/tmp/${KB}/
 
 vial-qmk-compile:
 	$(eval KB := ${kb})
