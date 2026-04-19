@@ -1,5 +1,125 @@
 #include QMK_KEYBOARD_H
 
+#ifdef OLED_ENABLE
+
+static void render_layer(uint8_t line) {
+    oled_set_cursor(0, line);
+    oled_write_P(PSTR("L: "), false);
+    switch (get_highest_layer(layer_state)) {
+        case 0: oled_write_P(PSTR("DEFAULT"), false); break;
+        case 1: oled_write_P(PSTR("LOWER "), false); break;
+        case 2: oled_write_P(PSTR("RAISE "), false); break;
+        case 3: oled_write_P(PSTR("ADJUST"), false); break;
+        default: oled_write_P(PSTR("?    "), false); break;
+    }
+}
+
+static void render_modifier_state(uint8_t line) {
+    oled_set_cursor(0,line);
+    if (get_mods() & MOD_MASK_GUI) {
+        oled_write_char(137,false);
+        oled_write_char(138,false);
+        oled_set_cursor(0,line+1);
+        oled_write_char(169,false);
+        oled_write_char(170,false);
+    } else {
+        oled_write_char(129,false);
+        oled_write_char(130,false);
+        oled_set_cursor(0,line+1);
+        oled_write_char(161,false);
+        oled_write_char(162,false);
+    }
+    oled_set_cursor(2,line);
+    if (get_mods() & MOD_MASK_ALT) {
+        oled_write_char(139,false);
+        oled_write_char(140,false);
+        oled_set_cursor(2,line+1);
+        oled_write_char(171,false);
+        oled_write_char(172,false);
+    } else {
+        oled_write_char(131,false);
+        oled_write_char(132,false);
+        oled_set_cursor(2,line+1);
+        oled_write_char(163,false);
+        oled_write_char(164,false);
+    }
+    oled_set_cursor(4,line);
+    if (get_mods() & MOD_MASK_CTRL) {
+        oled_write_char(143,false);
+        oled_write_char(144,false);
+        oled_set_cursor(4,line+1);
+        oled_write_char(175,false);
+        oled_write_char(176,false);
+    } else {
+        oled_write_char(135,false);
+        oled_write_char(136,false);
+        oled_set_cursor(4,line+1);
+        oled_write_char(167,false);
+        oled_write_char(168,false);
+    }
+    oled_set_cursor(6,line);
+    if ((get_mods() & MOD_MASK_SHIFT)) {
+        oled_write_char(141,false);
+        oled_write_char(142,false);
+        oled_set_cursor(6,line+1);
+        oled_write_char(173,false);
+        oled_write_char(174,false);
+    } else {
+        oled_write_char(133,false);
+        oled_write_char(134,false);
+        oled_set_cursor(6,line+1);
+        oled_write_char(165,false);
+        oled_write_char(166,false);
+    }
+    // TODO: handle muted state
+    // oled_set_cursor(8,line);
+    // oled_write_char(145,false);
+    // oled_set_cursor(8,line+1);
+    // oled_write_char(177,false);
+    // oled_set_cursor(9,line);
+    // if (!oled_state.muted) {
+    //     oled_write_char(146,false);
+    //     oled_set_cursor(9,line+1);
+    //     oled_write_char(178,false);
+    // } else {
+    //     oled_write_char(147,false);
+    //     oled_set_cursor(9,line+1);
+    //     oled_write_char(179,false);
+    // }
+    oled_advance_page(false);
+}
+
+static inline void render_linebreak(uint8_t line) {
+    oled_set_cursor(0, line);
+    oled_write_P(PSTR("__________"), false);
+}
+
+static void render_wpm(uint8_t line) {
+    oled_set_cursor(0, line);
+    oled_write_P(PSTR("WPM:"), false);
+    oled_write(get_u8_str(get_current_wpm(), ' '), false);
+}
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    if (is_keyboard_master()) return OLED_ROTATION_90;
+    return OLED_ROTATION_0;
+}
+
+bool oled_task_user(void) {
+    if (is_keyboard_master()) {
+        render_layer(1);
+        render_linebreak(2);
+        // TODO: render keyboard layout
+        // TODO: render clock
+        render_linebreak(11);
+        render_modifier_state(12);
+        render_linebreak(14);
+        render_wpm(15);
+    }
+    return false;
+}
+#endif
+
 
 #ifdef LAYOUT_split_3x6_3_ex2
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
