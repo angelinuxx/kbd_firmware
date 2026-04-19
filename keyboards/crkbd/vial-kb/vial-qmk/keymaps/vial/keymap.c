@@ -1,6 +1,25 @@
 #include QMK_KEYBOARD_H
 
 #ifdef OLED_ENABLE
+#include "frames.inc"
+
+static uint8_t  current_frame = 0;
+static uint32_t anim_timer    = 0;
+
+#pragma GCC push_options
+#pragma GCC optimize("O2")
+static void render_tetris(void) {
+    if (timer_elapsed32(anim_timer) > anim_frame_duration) {
+        anim_timer    = timer_read32();
+        current_frame = (current_frame + 1) % frame_count;
+    }
+    oled_write_raw_P(tetris_frames[current_frame], frame_size);
+}
+#pragma GCC pop_options
+
+static void render_draw(void) {
+   render_tetris();
+}
 
 static void render_layer(uint8_t line) {
     oled_set_cursor(0, line);
@@ -101,8 +120,7 @@ static void render_wpm(uint8_t line) {
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    if (is_keyboard_master()) return OLED_ROTATION_90;
-    return OLED_ROTATION_0;
+    return OLED_ROTATION_90;
 }
 
 bool oled_task_user(void) {
@@ -115,6 +133,8 @@ bool oled_task_user(void) {
         render_modifier_state(12);
         render_linebreak(14);
         render_wpm(15);
+    } else {
+        render_draw();
     }
     return false;
 }
